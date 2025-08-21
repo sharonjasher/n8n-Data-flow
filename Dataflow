@@ -1,0 +1,254 @@
+
+{
+  "name": "dataflow-2nd flow",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -432,
+        -16
+      ],
+      "id": "69ac5b27-a211-49d0-b8be-471c67b5a804",
+      "name": "Trigger Manual"
+    },
+    {
+      "parameters": {
+        "batchSize": 4,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        192,
+        32
+      ],
+      "id": "54437724-dd15-4956-a1e6-42e488962ff6",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "57d289f0-2d07-4e9a-85af-44a6c40b06a4",
+              "leftValue": "={{ $json.age }}",
+              "rightValue": 40,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            },
+            {
+              "id": "41af4006-269e-4743-8840-3fdc5692cdc2",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        496,
+        128
+      ],
+      "id": "d29839d5-a5e8-415f-973f-6f427513080e",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "294f726e-1ed0-4b4c-a189-cb907a890707",
+              "name": "users",
+              "value": "[{\"Name\" : \"Sharon\",\"age\" : 44,\"City\" : \"Coimbatore\"},{\"Name\" : \"Chriselda\",\"age\" : 11,\"City\" : \" Trichy\"},{\"Name\":\"Jasher\",\"age\":48,\"City\":\"Coonoor\"},{\"Name\":\"Rini\",\"age\":9,\"City\":\"Chennai\"}]",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -224,
+        -16
+      ],
+      "id": "8c629762-d14a-4413-a4ef-499dc8fe23f6",
+      "name": "Array"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the first item which contains the 'users' array\nconst data = items[0].json;\n\n// Ensure 'users' exists and is an array\nif (!Array.isArray(data.users)) {\n  throw new Error(\"Missing or invalid 'users' array\");\n}\n\n// Create new items, one for each user\nconst output = data.users.map(user => {\n  return {\n    json: user\n  };\n});\n\nreturn output;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -16,
+        -16
+      ],
+      "id": "aaf62cdf-5a13-467f-a828-9e805d38b0c4",
+      "name": "User Array"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "916f0ecd-e961-4493-9b53-37f56bb0c797",
+              "name": "message",
+              "value": "They are old people",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        704,
+        32
+      ],
+      "id": "3e120ac9-a865-4c13-9912-6bbec667ce66",
+      "name": "old people"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8bf74953-6e43-4834-93a0-237ef2ab298b",
+              "name": "message",
+              "value": "They are young people",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        688,
+        240
+      ],
+      "id": "a4182836-bb34-415f-8004-1d7e5f30e835",
+      "name": "Young people"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Trigger Manual": {
+      "main": [
+        [
+          {
+            "node": "Array",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "old people",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Young people",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Array": {
+      "main": [
+        [
+          {
+            "node": "User Array",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "User Array": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "old people": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Young people": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "16cb52c0-76e8-40d1-ba98-258a91bf0a5c",
+  "meta": {
+    "instanceId": "190fb5071ca3fe86f93b972bc98e47e4fd0322cb80f0739d20c765c8fdaaa2d2"
+  },
+  "id": "VYmwyEQmMGls9ofo",
+  "tags": []
+}
